@@ -1,5 +1,5 @@
 provider "aws" {
-  region     = var.aws_region
+  region = var.aws_region
 }
 
 # ---------- variable definition ----------
@@ -14,10 +14,10 @@ variable "flow_log_bucket_name" {
 
 variable "s3_access_log_bucket_name" {
   description = "The name of the S3 bucket used to store access log (must be unique within an AWS partition)"
-} 
+}
 
 variable "ssh_allowed_host" {
-  type = string
+  type        = string
   description = "CIDR block allowed to ssh to the EC2 VM"
 }
 
@@ -35,12 +35,12 @@ variable "ec2_instance_type" {
 
 variable "pcc_username" {
   description = "Prisma Cloud username (for SaaS Console, it is the access key ID defined in Setings > Access Keys)"
-  sensitive = "true"
+  sensitive   = "true"
 }
 
 variable "pcc_password" {
   description = "Prisma Cloud password (for SaaS Console, it is the secret key defined in Setings > Access Keys)"
-  sensitive = "true"
+  sensitive   = "true"
 }
 
 variable "pcc_url" {
@@ -69,6 +69,9 @@ variable "attacker_machine_name" {
 
 resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.vpc1.id
+  tags = {
+    yor_trace = "f47cf02c-a259-4e87-96fa-d2ba5ad84046"
+  }
 }
 
 # Enable VPC flow log
@@ -78,22 +81,29 @@ resource "aws_flow_log" "vpc_flow_log" {
   log_destination_type = "s3"
   traffic_type         = "ALL"
   vpc_id               = aws_vpc.vpc1.id
+  tags = {
+    yor_trace = "2eb0dbce-d871-4140-81c5-d730dd7c00fc"
+  }
 }
 
 # Create S3 bucket for storing flow log
 
 resource "aws_s3_bucket" "vpc_flow_log" {
-  bucket = var.flow_log_bucket_name
+  bucket        = var.flow_log_bucket_name
   force_destroy = "true"
+  tags = {
+    yor_trace = "f82a4534-684a-4d87-8b4b-3b0ccc65fd82"
+  }
 }
 
 # Create vpc
 
 resource "aws_vpc" "vpc1" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = "true"
   tags = {
-    Name = "VPC1"
+    Name      = "VPC1"
+    yor_trace = "22667212-e3c1-4ce8-9e96-43921c97b637"
   }
 }
 
@@ -105,7 +115,8 @@ resource "aws_subnet" "subnet-1" {
   availability_zone = format("%sa", var.aws_region)
 
   tags = {
-    Name = "vpc1-subnet-1"
+    Name      = "vpc1-subnet-1"
+    yor_trace = "dd7f68ef-592b-4f69-8b55-5fd8babc6a43"
   }
 }
 
@@ -113,6 +124,9 @@ resource "aws_subnet" "subnet-1" {
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc1.id
+  tags = {
+    yor_trace = "242cb581-18fc-4b83-9816-381d5ab8ff63"
+  }
 }
 
 # Attach Internet GW to default route table and setup default route
@@ -126,7 +140,8 @@ resource "aws_default_route_table" "default_route_table" {
   }
 
   tags = {
-    Name = "default-route-table"
+    Name      = "default-route-table"
+    yor_trace = "9c04f56b-f28a-4fc4-8f35-5146cfb7862a"
   }
 }
 
@@ -167,19 +182,20 @@ resource "aws_security_group" "allow-ssh-web" {
   }
 
   tags = {
-    Name = "allow-ssh-web"
+    Name      = "allow-ssh-web"
+    yor_trace = "7e0ab105-f39e-4628-8f4e-5676c9a9e852"
   }
 }
 
 # Create Ubuntu EC2
 
 resource "aws_instance" "web-server" {
-  ami               = var.ec2_ami
-  instance_type     = var.ec2_instance_type
-  key_name          = var.ec2_key_pair_name
+  ami                         = var.ec2_ami
+  instance_type               = var.ec2_instance_type
+  key_name                    = var.ec2_key_pair_name
   associate_public_ip_address = "true"
-  subnet_id = aws_subnet.subnet-1.id
-  vpc_security_group_ids = [aws_security_group.allow-ssh-web.id]
+  subnet_id                   = aws_subnet.subnet-1.id
+  vpc_security_group_ids      = [aws_security_group.allow-ssh-web.id]
 
   user_data = <<-EOF
     #!/bin/bash
@@ -224,7 +240,8 @@ resource "aws_instance" "web-server" {
     EOF
 
   tags = {
-    Name = "web-server"
+    Name      = "web-server"
+    yor_trace = "76a02e5e-7302-479e-903b-21c479fdb036"
   }
 }
 
