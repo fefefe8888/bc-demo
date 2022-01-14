@@ -72,8 +72,6 @@ resource "aws_default_security_group" "default" {
   tags = {
     yor_trace = "f47cf02c-a259-4e87-96fa-d2ba5ad84046"
   }
-  description = "default VPC security group"
-  name = "default"
 }
 
 
