@@ -119,7 +119,10 @@ resource "aws_subnet" "subnet-1" {
     Name      = "vpc1-subnet-1"
     yor_trace = "dd7f68ef-592b-4f69-8b55-5fd8babc6a43"
   }
+  assign_ipv6_address_on_creation = false
+  map_public_ip_on_launch = false
 }
+
 
 # Create Internet GW
 
