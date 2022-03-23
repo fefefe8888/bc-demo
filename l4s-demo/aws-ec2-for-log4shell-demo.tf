@@ -16,7 +16,12 @@ variable "s3_access_log_bucket_name" {
   description = "The name of the S3 bucket used to store access log (must be unique within an AWS partition)"
 }
 
-variable "ssh_allowed_host" {
+variable "ssh_allowed_host_1" {
+  type        = string
+  description = "CIDR block allowed to ssh to the EC2 VM"
+}
+
+variable "ssh_allowed_host_2" {
   type        = string
   description = "CIDR block allowed to ssh to the EC2 VM"
 }
