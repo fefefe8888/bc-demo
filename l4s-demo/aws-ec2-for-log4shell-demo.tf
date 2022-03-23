@@ -172,9 +172,15 @@ resource "aws_security_group" "allow-ssh-web" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.ssh_allowed_host]
+    cidr_blocks = [var.ssh_allowed_host_1]
   }
-
+  ingress {
+    description = "SSH from specific host"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [var.ssh_allowed_host_2]
+  }
   egress {
     from_port   = 0
     to_port     = 0
